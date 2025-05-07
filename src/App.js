@@ -102,15 +102,76 @@ Haciendo una cara seria por competencia
 Haciendo una burbuja con chicle
 Tapándose los ojos el uno al otro
 Foto en una carrera de cucharas y huevo
-`.split("\n").filter(m => m.trim() !== "");
+`.split("\n");
 
 export default function App() {
   const [momentoActual, setMomentoActual] = useState(null);
+  const [imagen, setImagen] = useState(null);
+  const [verAlbum, setVerAlbum] = useState(false);
+  const [fotos, setFotos] = useState([]);
 
   const obtenerMomento = () => {
     const random = Math.floor(Math.random() * momentos.length);
     setMomentoActual(momentos[random]);
   };
+
+  const handleImagen = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => setImagen(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const guardarFoto = () => {
+    if (imagen && momentoActual) {
+      setFotos([...fotos, { imagen, momento: momentoActual }]);
+      setImagen(null);
+      setMomentoActual(null);
+    }
+  };
+
+  if (verAlbum) {
+    const paginas = Math.ceil(101 / 12);
+    return (
+      <div style={{ backgroundColor: "#d9e3e8", minHeight: "100vh", padding: 20 }}>
+        <h2 style={{ textAlign: "center", color: "#1b3b4d" }}>Álbum de 101 Momentos 💙</h2>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: 10,
+          maxWidth: 800,
+          margin: "0 auto"
+        }}>
+          {Array.from({ length: 101 }).map((_, i) => {
+            const foto = fotos[i];
+            return (
+              <div
+                key={i}
+                style={{
+                  height: 120,
+                  border: "2px dashed #90a4ae",
+                  borderRadius: 8,
+                  backgroundColor: "#f0f4f8",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden"
+                }}
+              >
+                {foto ? (
+                  <img src={foto.imagen} alt={`momento-${i}`} style={{ width: "100%", objectFit: "cover" }} />
+                ) : (
+                  <span style={{ color: "#607d8b" }}>#{i + 1}</span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -150,15 +211,13 @@ export default function App() {
             cursor: "pointer",
             transition: "transform 0.2s"
           }}
-          onMouseOver={(e) => (e.target.style.transform = "scale(1.05)")}
-          onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
         >
           💖 Sorpréndeme con un momento 💖
         </button>
         <span style={{ fontSize: "1.8rem", animation: "bounce 2s infinite" }}>🐱</span>
       </div>
 
-      <input type="file" style={{ marginTop: 20 }} />
+      <input type="file" onChange={handleImagen} style={{ marginTop: 20 }} />
 
       {momentoActual && (
         <div
@@ -177,7 +236,44 @@ export default function App() {
           {momentoActual}
         </div>
       )}
+
+      {imagen && momentoActual && (
+        <button
+          onClick={guardarFoto}
+          style={{
+            marginTop: 20,
+            backgroundColor: "#8bc34a",
+            border: "none",
+            padding: "10px 20px",
+            borderRadius: 20,
+            fontWeight: "bold",
+            cursor: "pointer",
+            color: "white"
+          }}
+        >
+          Guardar momento
+        </button>
+      )}
+
+      {fotos.length > 0 && (
+        <button
+          onClick={() => setVerAlbum(true)}
+          style={{
+            marginTop: 20,
+            backgroundColor: "#4fc3f7",
+            border: "none",
+            padding: "10px 20px",
+            borderRadius: 20,
+            fontWeight: "bold",
+            cursor: "pointer",
+            color: "white"
+          }}
+        >
+          Ver álbum
+        </button>
+      )}
     </div>
   );
 }
+
 
