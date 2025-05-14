@@ -116,6 +116,7 @@ export default function App() {
   const [categoriaActual, setCategoriaActual] = useState("❤️ Románticos");
   const [momentoActual, setMomentoActual] = useState(null);
   const [imagenes, setImagenes] = useState({});
+  const [imagenAmpliada, setImagenAmpliada] = useState(null);
 
   const obtenerMomento = () => {
     const disponibles = categorias[categoriaActual].filter(m => !imagenes[m]);
@@ -202,8 +203,10 @@ export default function App() {
               alignItems: "center",
               justifyContent: "center",
               overflow: "hidden",
-              position: "relative"
+              position: "relative",
+              cursor: imagenes[momento] ? "pointer" : "default"
             }}
+            onClick={() => imagenes[momento] && setImagenAmpliada(imagenes[momento])}
           >
             {imagenes[momento] ? (
               <img src={imagenes[momento]} alt={momento} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -222,8 +225,33 @@ export default function App() {
           ))}
         </ul>
       </div>
+
+      {imagenAmpliada && (
+        <div
+          onClick={() => setImagenAmpliada(null)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999
+          }}
+        >
+          <img
+            src={imagenAmpliada}
+            alt="ampliada"
+            style={{ maxHeight: "90vh", maxWidth: "90vw", borderRadius: 12 }}
+          />
+        </div>
+      )}
     </div>
   );
 }
+
 
 
